@@ -595,21 +595,6 @@ public class BitvectorTranslation extends ExpressionTranslation {
 				new Expression[] { getCurrentRoundingMode(), oldExpression },
 				mTypeHandler.getBoogieTypeForCType(newType));
 		final RValue rVal = new RValue(resultExpression, newType, false, false);
-			
-//		return new ExpressionResultBuilder().addAllExceptLrValue(rexp).setLrValue(testValue).build();
-
-		
-//		final Expression returnValueAsBitvector = ExpressionFactory.constructIdentifierExpression(loc,
-//				mTypeHandler.getBoogieTypeForBoogieASTType(valueAstType), "#valueAsBitvector",
-//				new DeclarationInformation(StorageClass.QUANTIFIED, null));
-//		
-//		// Check this - what's the difference between CPrimitive and CPrimitives
-//		final ASTType type = ((TypeHandler) mTypeHandler).byteSize2AstType(loc, CPrimitives.FLOAT.getPrimitiveCategory(),
-//				mTypeSizes.getSize(CPrimitives.FLOAT));
-//		
-//		final VarList[] parameters = new VarList[] { new VarList(loc, new String[] { "#valueAsBitvector" }, type) };
-//		
-//		final Expression qe = new QuantifierExpression(loc, false, new String[0], parameters, new Attribute[0], equalityExpression);
 		
 		return new ExpressionResultBuilder().addAllExceptLrValue(rexp).setLrValue(rVal).build();
 	}
