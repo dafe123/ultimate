@@ -1170,8 +1170,12 @@ public class BitvectorTranslation extends ExpressionTranslation {
 
 	@Override
 	public RValue constructOtherBinaryFloatOperation(final ILocation loc, final FloatFunction floatFunction,
-			final RValue first, final RValue second) {
+			final RValue firstBitVec, final RValue secondBitVec) {
 		// TODO Auto-generated method stub
+		
+		final RValue first = new RValue(this.transformBitvectorToFloat(loc,firstBitVec.getValue(), CPrimitives.FLOAT), firstBitVec.getUnderlyingType());
+		final RValue second = new RValue(this.transformBitvectorToFloat(loc,secondBitVec.getValue(), CPrimitives.FLOAT), firstBitVec.getUnderlyingType());
+		
 		switch (floatFunction.getFunctionName()) {
 		case "fmin":
 			return delegateOtherBinaryFloatOperationToSmt(loc, first, second, "fp.min");
