@@ -1661,10 +1661,19 @@ public class StandardFunctionHandler {
 				(RValue) args.get(0).getLrValue(), (RValue) args.get(1).getLrValue());
 		Expression[] arguments = new Expression[1];
 		arguments[0] = rvalue.getValue();
-		final CallStatement call = StatementFactory.constructCallStatement(loc, false, new VariableLHS[] {}, "float_to_bitvec32", arguments);
 		final ExpressionResultBuilder resultBuilder = new ExpressionResultBuilder();
-		resultBuilder.addAllExceptLrValue(args);
+		final AuxVarInfo auxvarinfo = mAuxVarInfoBuilder.constructAuxVarInfo(
+				loc,
+				new CPrimitive(CPrimitives.FLOAT));
+		resultBuilder.addDeclaration(auxvarinfo.getVarDec());
+		resultBuilder.addAuxVar(auxvarinfo);
+		final CallStatement call = StatementFactory.constructCallStatement(
+				loc,
+				false, new VariableLHS[] {auxvarinfo.getLhs()},
+				"float_to_bitvec32",
+				arguments);
 		resultBuilder.addStatement(call);
+		resultBuilder.setLrValue(new RValue(auxvarinfo.getExp(), new CPrimitive(CPrimitives.FLOAT)));
 		
 		return resultBuilder.build();
 		
