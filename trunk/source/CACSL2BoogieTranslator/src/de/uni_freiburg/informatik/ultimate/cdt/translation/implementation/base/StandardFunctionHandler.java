@@ -1662,9 +1662,8 @@ public class StandardFunctionHandler {
 		Expression[] arguments = new Expression[1];
 		arguments[0] = rvalue.getValue();
 		final ExpressionResultBuilder resultBuilder = new ExpressionResultBuilder();
-		final AuxVarInfo auxvarinfo = mAuxVarInfoBuilder.constructAuxVarInfo(
-				loc,
-				new CPrimitive(CPrimitives.FLOAT));
+		final CPrimitive cType = new CPrimitive(CPrimitives.FLOAT);
+		final AuxVarInfo auxvarinfo = mAuxVarInfoBuilder.constructAuxVarInfo(loc, cType, SFO.AUXVAR.NONDET);
 		resultBuilder.addDeclaration(auxvarinfo.getVarDec());
 		resultBuilder.addAuxVar(auxvarinfo);
 		final CallStatement call = StatementFactory.constructCallStatement(
