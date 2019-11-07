@@ -952,7 +952,10 @@ public class BitvectorTranslation extends ExpressionTranslation {
 
 	@Override
 	public RValue constructOtherUnaryFloatOperation(final ILocation loc, final FloatFunction floatFunction,
-			final RValue argument) {
+			final RValue argumentBitvec) {
+		
+		final RValue argument = new RValue(this.transformBitvectorToFloat(loc, argumentBitvec.getValue(), CPrimitives.FLOAT), argumentBitvec.getUnderlyingType());
+		
 		if ("sqrt".equals(floatFunction.getFunctionName())) {
 			checkIsFloatPrimitive(argument);
 			final CPrimitive argumentType = (CPrimitive) argument.getCType().getUnderlyingType();
