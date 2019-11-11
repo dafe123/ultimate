@@ -1650,7 +1650,7 @@ public class StandardFunctionHandler {
 		final ExpressionResult arg = handleFloatArguments(main, node, loc, name, 1, floatFunction).get(0);
 		final RValue rvalue =
 				mExpressionTranslation.constructOtherUnaryFloatOperation(loc, floatFunction, (RValue) arg.getLrValue());
-		return constructBitvecResult(rvalue, loc);
+		return this.constructBitvecResultIfNecessary(rvalue, loc, arg, floatFunction);
 		// return new ExpressionResultBuilder().addAllExceptLrValue(arg).setLrValue(rvalue).build();
 	}
 
@@ -1660,7 +1660,7 @@ public class StandardFunctionHandler {
 		final List<ExpressionResult> args = handleFloatArguments(main, node, loc, name, 2, floatFunction);
 		final RValue rvalue = mExpressionTranslation.constructOtherBinaryFloatOperation(loc, floatFunction,
 				(RValue) args.get(0).getLrValue(), (RValue) args.get(1).getLrValue());
-		return constructBitvecResult(rvalue, loc);
+		return this.constructBitvecResultIfNecessary(rvalue, loc, args, floatFunction);
 		
 		// return new ExpressionResultBuilder().addAllExceptLrValue(args).setLrValue(rvalue).build();
 	}
@@ -2061,7 +2061,23 @@ public class StandardFunctionHandler {
 				String methodName);
 	}
 	
-	private Result constructBitvecResult(LRValue rvalue, ILocation loc) {
+
+	private Result constructBitvecResultIfNecessary(RValue rvalue, ILocation loc, ExpressionResult arg,
+			FloatFunction function) {
+		return this.constructBitvecResultIfNecessary(rvalue, loc, new ArrayList<>(java.util.Arrays.asList(arg)), function);
+	}
+	
+	private Result constructBitvecResultIfNecessary(final LRValue rvalue, final ILocation loc, final List<ExpressionResult> args, FloatFunction function) {
+		final String functionName = function.getFunctionName();
+		// TODO: remove hardcoded comparison.
+		if ("signbit".equals(functionName) || "copysign".equals(functionName) || "fmod".equals(functionName)) {
+			return new ExpressionResultBuilder().addAllExceptLrValue(args).setLrValue(rvalue).build();
+		} else {
+			return this.constructBitvecResult(rvalue, loc);
+		}
+	}
+	
+	private Result constructBitvecResult(final LRValue rvalue, final ILocation loc) {
 		Expression[] arguments = new Expression[1];
 		arguments[0] = rvalue.getValue();
 		final ExpressionResultBuilder resultBuilder = new ExpressionResultBuilder();
