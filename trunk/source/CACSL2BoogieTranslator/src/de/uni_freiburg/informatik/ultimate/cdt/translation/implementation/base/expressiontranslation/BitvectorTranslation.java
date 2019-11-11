@@ -952,8 +952,6 @@ public class BitvectorTranslation extends ExpressionTranslation {
 	public RValue constructOtherUnaryFloatOperation(final ILocation loc, final FloatFunction floatFunction,
 			final RValue argumentBitvec) {
 		
-		final RValue argument = this.convertToFloatIfNecessary(loc, floatFunction, argumentBitvec);
-		
 		if ("sqrt".equals(floatFunction.getFunctionName())) {
 			checkIsFloatPrimitive(argument);
 			final CPrimitive argumentType = (CPrimitive) argument.getCType().getUnderlyingType();
@@ -1174,14 +1172,11 @@ public class BitvectorTranslation extends ExpressionTranslation {
 			final RValue first, final RValue second) {
 		// TODO Auto-generated method stub
 		
-		final RValue firstConverted = this.convertToFloatIfNecessary(loc, floatFunction, first);
-		final RValue secondConverted = this.convertToFloatIfNecessary(loc, floatFunction, second);
-		
 		switch (floatFunction.getFunctionName()) {
 		case "fmin":
-			return delegateOtherBinaryFloatOperationToSmt(loc, firstConverted, secondConverted, "fp.min");
+			return delegateOtherBinaryFloatOperationToSmt(loc, first, second, "fp.min");
 		case "fmax":
-			return delegateOtherBinaryFloatOperationToSmt(loc, firstConverted, secondConverted, "fp.max");
+			return delegateOtherBinaryFloatOperationToSmt(loc, first, second, "fp.max");
 		case "remainder":
 			// TODO: Remove until unsoundness can be investigated
 			break;
@@ -1199,25 +1194,25 @@ public class BitvectorTranslation extends ExpressionTranslation {
 			// fmod guarantees that the return value is the same sign as the first argument (x)
 			// copies the sign of firts element to remainder value
 			// Copysign might not be correct - fmod does not guarantee -NaNs 
-			final RValue remainderValue = delegateOtherBinaryFloatOperationToSmt(loc, firstConverted, secondConverted, "fp.rem");
+			final RValue remainderValue = delegateOtherBinaryFloatOperationToSmt(loc, first, second, "fp.rem");
 			final FloatFunction copySignFunction = FloatFunction.decode("copysign");
-			return constructOtherBinaryFloatOperation(loc, copySignFunction, remainderValue, firstConverted);
+			return constructOtherBinaryFloatOperation(loc, copySignFunction, remainderValue, first);
 		case "fdim":
 			final FloatFunction isNaN = FloatFunction.decode("isnan");
 
 			// if (first || second) is NaN -> NaN
-			final RValue firstIsNaN = constructOtherUnaryFloatOperation(loc, isNaN, firstConverted);
-			final RValue secondIsNaN = constructOtherUnaryFloatOperation(loc, isNaN, secondConverted);
+			final RValue firstIsNaN = constructOtherUnaryFloatOperation(loc, isNaN, first);
+			final RValue secondIsNaN = constructOtherUnaryFloatOperation(loc, isNaN, second);
 
 			// if first>second, first - second, else +0
-			final CPrimitive typeFirst = (CPrimitive) firstConverted.getCType().getUnderlyingType();
-			final CPrimitive typeSecond = (CPrimitive) secondConverted.getCType().getUnderlyingType();
+			final CPrimitive typeFirst = (CPrimitive) first.getCType().getUnderlyingType();
+			final CPrimitive typeSecond = (CPrimitive) second.getCType().getUnderlyingType();
 
 			final Expression comparison = constructBinaryComparisonFloatingPointExpression(loc,
-					IASTBinaryExpression.op_greaterThan, firstConverted.getValue(), typeFirst, secondConverted.getValue(), typeSecond);
+					IASTBinaryExpression.op_greaterThan, first.getValue(), typeFirst, second.getValue(), typeSecond);
 
 			final Expression subtraction = constructArithmeticFloatingPointExpression(loc,
-					IASTBinaryExpression.op_minus, firstConverted.getValue(), typeFirst, secondConverted.getValue(), typeSecond);
+					IASTBinaryExpression.op_minus, first.getValue(), typeFirst, second.getValue(), typeSecond);
 
 			final Expression zero = constructLiteralForFloatingType(loc, typeFirst, BigDecimal.ZERO);
 
@@ -1225,10 +1220,10 @@ public class BitvectorTranslation extends ExpressionTranslation {
 					ExpressionFactory.constructIfThenElseExpression(loc, comparison, subtraction, zero);
 
 			final Expression secondNaNExpr = ExpressionFactory.constructIfThenElseExpression(loc,
-					secondIsNaN.getValue(), secondConverted.getValue(), resultExprFdim);
+					secondIsNaN.getValue(), second.getValue(), resultExprFdim);
 
 			final Expression firstNaNExpr = ExpressionFactory.constructIfThenElseExpression(loc, firstIsNaN.getValue(),
-					firstConverted.getValue(), secondNaNExpr);
+					first.getValue(), secondNaNExpr);
 
 			return new RValue(firstNaNExpr, typeFirst);
 		case "copysign":
@@ -1248,25 +1243,16 @@ public class BitvectorTranslation extends ExpressionTranslation {
 			// final Expression resultExpr = ExpressionFactory.constructIfThenElseExpression(loc, isNegativeSecond,
 			// negative, absoluteValue.getValue());
 			// return new RValue(resultExpr, resultType);
-			final Expression unsignedBitVec = extractBits(loc, firstConverted.getValue(), 31, 0);
-			final Expression signBit = extractBits(loc, secondConverted.getValue(), 32, 31);
+			final Expression unsignedBitVec = extractBits(loc, first.getValue(), 31, 0);
+			final Expression signBit = extractBits(loc, second.getValue(), 32, 31);
 
 			final List<Expression> resultAsList = Arrays.asList(unsignedBitVec, signBit);
 			final Expression result = concatBits(loc, resultAsList, 32);
-			return new RValue(result, (CPrimitive) firstConverted.getCType().getUnderlyingType());
+			return new RValue(result, (CPrimitive) first.getCType().getUnderlyingType());
 		default:
 			break;
 		}
 		throw new UnsupportedOperationException("not yet supported float operation " + floatFunction.getFunctionName());
-	}
-	
-	private RValue convertToFloatIfNecessary(final ILocation loc, final FloatFunction function, final RValue value) {
-		final String functionName = function.getFunctionName();
-		if ("signbit".equals(functionName) || "copysign".equals(functionName) || "fmod".equals(functionName)) {
-			return value;
-		} else {
-			return new RValue(this.transformBitvectorToFloat(loc, value.getValue(), CPrimitives.FLOAT), value.getUnderlyingType());
-		}
 	}
 
 	private RValue delegateOtherBinaryFloatOperationToSmt(final ILocation loc, final RValue first, final RValue second,

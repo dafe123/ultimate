@@ -1665,6 +1665,16 @@ public class StandardFunctionHandler {
 		// return new ExpressionResultBuilder().addAllExceptLrValue(args).setLrValue(rvalue).build();
 	}
 
+//	private ExpressionResult convertToFloatIfNecessary(final ILocation loc, final FloatFunction function, final ExpressionResult value) {
+//		final String functionName = function.getFunctionName();
+//		// TODO: remove hardcoded comparison.
+//		if ("signbit".equals(functionName) || "copysign".equals(functionName) || "fmod".equals(functionName)) {
+//			return value;
+//		} else {
+//			return mExpressionTranslation.transformBitvectorToFloat(loc, value, CPrimitives.FLOAT);
+//		}
+//	}
+	
 	private List<ExpressionResult> handleFloatArguments(final IDispatcher main, final IASTFunctionCallExpression node,
 			final ILocation loc, final String name, final int numberOfArgs, final FloatFunction floatFunction) {
 		final IASTInitializerClause[] arguments = node.getArguments();
@@ -1681,6 +1691,9 @@ public class StandardFunctionHandler {
 					mExprResultTransformer.convertIfNecessary(loc, decayedArgument, floatFunction.getType());
 			rtr.add(convertedArgument);
 		}
+		
+
+
 
 		final CPrimitive typeDeterminedByName = floatFunction.getType();
 		if (typeDeterminedByName != null) {
