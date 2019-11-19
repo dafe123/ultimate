@@ -542,19 +542,19 @@ public class PostProcessor {
 		final ArrayList<Declaration> declarations = new ArrayList<>();
 		final ArrayList<Statement> statements = new ArrayList<>();
 		
-		CPrimitive floatCPrimitive = null;
+		CPrimitives floatCPrimitives = null;
 		switch (bytes) {
 			case 4:
-				floatCPrimitive = new CPrimitive(CPrimitives.FLOAT);
+				floatCPrimitives = CPrimitives.FLOAT;
 				break;
 			case 8:
-				floatCPrimitive = new CPrimitive(CPrimitives.DOUBLE);
+				floatCPrimitives = CPrimitives.DOUBLE;
 				break;
 			case 16:
-				floatCPrimitive = new CPrimitive(CPrimitives.LONGDOUBLE);
+				floatCPrimitives = CPrimitives.LONGDOUBLE;
 				break;
 		}
-		final ASTType floatAstType = mTypeHandler.cType2AstType(loc, floatCPrimitive);
+		final ASTType floatAstType = mTypeHandler.cType2AstType(loc, new CPrimitive(floatCPrimitives));
 		final BoogieType floatBoogieType = (BoogieType) floatAstType.getBoogieType();
 		
 		
@@ -580,9 +580,9 @@ public class PostProcessor {
 		
 		final Expression inVarExp = ExpressionFactory.constructIdentifierExpression(loc,
 				mTypeHandler.getBoogieTypeForBoogieASTType(
-				mTypeHandler.cType2AstType(LocationFactory.createIgnoreCLocation(), new CPrimitive(CPrimitives.FLOAT))),
+				mTypeHandler.cType2AstType(LocationFactory.createIgnoreCLocation(), new CPrimitive(floatCPrimitives))),
 				inVar, new DeclarationInformation(StorageClass.PROC_FUNC_INPARAM, functionName));
-		final Expression inVarToFloat = mExpressionTranslation.transformBitvectorToFloat(loc, inVarExp, CPrimitives.FLOAT);
+		final Expression inVarToFloat = mExpressionTranslation.transformBitvectorToFloat(loc, inVarExp, floatCPrimitives);
 		
 
 		final EnsuresSpecification spec = mProcedureManager.constructEnsuresSpecification(loc, true, 
