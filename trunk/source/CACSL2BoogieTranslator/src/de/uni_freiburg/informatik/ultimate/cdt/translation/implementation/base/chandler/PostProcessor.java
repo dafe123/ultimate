@@ -299,20 +299,7 @@ public class PostProcessor {
 				continue;
 			}
 
-			int count = 0;
-			switch(cPrimitive.name()) {
-			case "FLOAT":
-				count = 4;
-				break;
-			case "DOUBLE":
-				count = 8;
-				break;
-			case "LONGDOUBLE":
-				count = 16;
-				break;
-			default:
-				break;
-			}
+			int count = mTypeSize.getSize(cPrimitive);
 			
 			final Attribute[] attributes;
 			if (!mSettings.overapproximateFloatingPointOperations()) {

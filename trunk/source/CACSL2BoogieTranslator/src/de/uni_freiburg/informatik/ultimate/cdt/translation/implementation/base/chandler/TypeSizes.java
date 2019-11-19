@@ -277,7 +277,9 @@ public class TypeSizes {
 		case LONGDOUBLE: {
 			final int sizeof = getSize(cPrimitive);
 			// 12 because of 80bit long doubles on linux x86
-			if (sizeof == 12 || sizeof == 16) {
+			if (sizeof == 12) {
+				result = new FloatingPointSize(sizeof, 65, 15);
+			} else if (sizeof == 16) {
 				result = new FloatingPointSize(sizeof, 113, 15);
 			} else {
 				throw new UnsupportedOperationException("unsupported sizeof " + cPrimitive + "==" + sizeof);
