@@ -563,6 +563,14 @@ public class TypeSizes {
 			return mByteSize;
 		}
 
+		public int getBitSize() {
+			return mByteSize * 8;
+		}
+
+		public int getDataSize() {
+			return mSignificant + mExponent;
+		}
+
 		/**
 		 * @return an int array containing the exponent and the significant
 		 */
