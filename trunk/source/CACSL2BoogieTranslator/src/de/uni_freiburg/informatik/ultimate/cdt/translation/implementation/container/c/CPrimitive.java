@@ -129,22 +129,25 @@ public class CPrimitive extends CType {
 	 */
 	private final CPrimitiveCategory mGeneralType;
 
-	public CPrimitive(final CPrimitives type, final boolean shadowed) {
+	public CPrimitive(final CPrimitives type) {
 		// FIXME: integrate those flags -- you will also need to change the equals method if you do
-		super(false, false, false, false, false, shadowed);
+		super(false, false, false, false, false, false);
 		mType = type;
 		mGeneralType = getGeneralType(type);
 	}
-	
-	public CPrimitive(final CPrimitives type) {
-		// FIXME: integrate those flags -- you will also need to change the equals method if you do
-		this(type, false);
-	}
-	
-	public CPrimitive(final CPrimitive base, final boolean shadowed) {
-		super(base.getUnderlyingType(), shadowed);
-		mType = base.getType();
+
+	private CPrimitive(final boolean isConst, final boolean isInline, final boolean isRestrict,
+			final boolean isVolatile, final boolean isExtern, final boolean isShadowed, final CPrimitives type) {
+		super(isConst, isInline, isRestrict, isVolatile, isExtern, isShadowed);
+		mType = type;
 		mGeneralType = getGeneralType(mType);
+	}
+
+	/**
+	 * @see CType#isSmtFloat()
+	 */
+	public CPrimitive setIsShadowed(final boolean shadowed) {
+		return new CPrimitive(isConst(), isInline(), isRestrict(), isVolatile(), isExtern(), shadowed, getType());
 	}
 
 	/**
@@ -155,7 +158,7 @@ public class CPrimitive extends CType {
 	 */
 	public CPrimitive(final IASTDeclSpecifier cDeclSpec) {
 		// FIXME: integrate those flags -- you will also need to change the equals method if you do
-		super(false, false, false, false, false);
+		super(false, false, false, false, false, false);
 		if (cDeclSpec instanceof IASTSimpleDeclSpecifier) {
 			final IASTSimpleDeclSpecifier sds = (IASTSimpleDeclSpecifier) cDeclSpec;
 			switch (sds.getType()) {
