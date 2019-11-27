@@ -137,8 +137,8 @@ public class CPrimitive extends CType {
 	}
 
 	private CPrimitive(final boolean isConst, final boolean isInline, final boolean isRestrict,
-			final boolean isVolatile, final boolean isExtern, final boolean isShadowed, final CPrimitives type) {
-		super(isConst, isInline, isRestrict, isVolatile, isExtern, isShadowed);
+			final boolean isVolatile, final boolean isExtern, final boolean isSmtFloat, final CPrimitives type) {
+		super(isConst, isInline, isRestrict, isVolatile, isExtern, isSmtFloat);
 		mType = type;
 		mGeneralType = getGeneralType(mType);
 	}
@@ -146,8 +146,8 @@ public class CPrimitive extends CType {
 	/**
 	 * @see CType#isSmtFloat()
 	 */
-	public CPrimitive setIsShadowed(final boolean shadowed) {
-		return new CPrimitive(isConst(), isInline(), isRestrict(), isVolatile(), isExtern(), shadowed, getType());
+	public CPrimitive setIsSmtFloat(final boolean isSmtFloat) {
+		return new CPrimitive(isConst(), isInline(), isRestrict(), isVolatile(), isExtern(), isSmtFloat, getType());
 	}
 
 	/**

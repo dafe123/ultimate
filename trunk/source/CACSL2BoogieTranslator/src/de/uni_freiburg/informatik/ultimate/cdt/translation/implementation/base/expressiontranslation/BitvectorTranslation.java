@@ -582,7 +582,7 @@ public class BitvectorTranslation extends ExpressionTranslation {
 	@Override
 	public ExpressionResult convertIntToFloat(final ILocation loc, final ExpressionResult rexp,
 			final CPrimitive newType) {
-		final CPrimitive conversionType = newType.setIsShadowed(true);
+		final CPrimitive conversionType = newType.setIsSmtFloat(true);
 		final String prefixedFunctionName = declareConversionFunction(loc,
 				(CPrimitive) rexp.getLrValue().getCType().getUnderlyingType(), conversionType);
 		final Expression oldExpression = rexp.getLrValue().getValue();
@@ -596,7 +596,7 @@ public class BitvectorTranslation extends ExpressionTranslation {
 	@Override
 	public ExpressionResult convertFloatToFloat(final ILocation loc, final ExpressionResult rexp,
 			final CPrimitive newType) {
-		final CPrimitive conversionType = newType.setIsShadowed(true);
+		final CPrimitive conversionType = newType.setIsSmtFloat(true);
 		final String prefixedFunctionName = declareConversionFunction(loc,
 				(CPrimitive) rexp.getLrValue().getCType().getUnderlyingType(), conversionType);
 		final Expression oldExpression = rexp.getLrValue().getValue();
@@ -1345,7 +1345,7 @@ public class BitvectorTranslation extends ExpressionTranslation {
 	@Override
 	public Expression transformBitvectorToFloat(final ILocation loc, final Expression bitvector,
 			final CPrimitives floatType) {
-		final CPrimitive conversionType = new CPrimitive(floatType).setIsShadowed(true);
+		final CPrimitive conversionType = new CPrimitive(floatType).setIsSmtFloat(true);
 		final FloatingPointSize fps = mTypeSizes.getFloatingPointSize(floatType);
 		final Expression significantBits = extractBits(loc, bitvector, fps.getSignificant() - 1, 0);
 		final Expression exponentBits = extractBits(loc, bitvector, fps.getDataSize() - 1, fps.getSignificant() - 1);
