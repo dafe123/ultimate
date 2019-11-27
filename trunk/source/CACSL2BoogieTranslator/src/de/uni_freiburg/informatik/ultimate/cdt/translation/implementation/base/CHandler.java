@@ -4047,38 +4047,30 @@ public class CHandler {
 		} else {
 			throw new UnsupportedOperationException("non-standard case of pointer arithmetic");
 		}
-		
-		
-		
-		final RValue rval = new RValue(expr, typeOfResult, false, false);
-		
 
+		final RValue rval = new RValue(expr, typeOfResult, false, false);
 
 		// TODO: backtranslation to bitvec here. This should be more modular.
-		if (lType.isArithmeticType() && rType.isArithmeticType() &&
-				(lType.isFloatingType() || rType.isFloatingType())) {
-			
-			// TODO: duplicate in StandardFunctionHandler
-			Expression[] arguments = new Expression[1];
-			arguments[0] = rval.getValue();
-			final CPrimitive cType = new CPrimitive(CPrimitives.FLOAT);
+		if (lType.isArithmeticType() && rType.isArithmeticType()
+				&& (lType.isFloatingType() || rType.isFloatingType())) {
+
+			// TODO: near-duplicate in ExpressionResultTransformer
+			final Expression[] arguments = new Expression[] { rval.getValue() };
+			final CPrimitive cType = (CPrimitive) rval.getCType();
+			assert cType.isSmtFloat() : "not an SMT float";
 			final AuxVarInfo auxvarinfo = mAuxVarInfoBuilder.constructAuxVarInfo(loc, cType, SFO.AUXVAR.NONDET);
 			builder.addDeclaration(auxvarinfo.getVarDec());
 			builder.addAuxVar(auxvarinfo);
-			final CallStatement call = StatementFactory.constructCallStatement(
-					loc,
-					false, new VariableLHS[] {auxvarinfo.getLhs()},
-					"float_to_bitvec"  + Integer.toString(mTypeSizes.getFloatingPointSize(cType).getBitSize()),
-					arguments);
+			final CallStatement call =
+					StatementFactory.constructCallStatement(loc, false, new VariableLHS[] { auxvarinfo.getLhs() },
+							"float_to_bitvec" + Integer.toString(mTypeSizes.getFloatingPointSize(cType).getBitSize()),
+							arguments);
 			builder.addStatement(call);
-			builder.setLrValue(new RValue(auxvarinfo.getExp(), new CPrimitive(CPrimitives.FLOAT)));
-
-			
-			// builder.setLrValue(rval);
+			builder.setLrValue(new RValue(auxvarinfo.getExp(), cType.setIsSmtFloat(false)));
 		} else {
 			builder.setLrValue(rval);
 		}
-		
+
 		final ExpressionResult intermediateResult;
 		if (left instanceof StringLiteralResult) {
 			assert lhs == null : "unforseen case";
@@ -4426,13 +4418,13 @@ public class CHandler {
 		final CPrimitive typeOfResult = (CPrimitive) left.getLrValue().getCType().getUnderlyingType();
 		assert typeOfResult.equals(right.getLrValue().getCType().getUnderlyingType());
 
-		final ExpressionResultBuilder result = new ExpressionResultBuilder().addAllExceptLrValue(left, right);
+		final ExpressionResultBuilder builder = new ExpressionResultBuilder().addAllExceptLrValue(left, right);
 		switch (op) {
 		case IASTBinaryExpression.op_multiply:
 		case IASTBinaryExpression.op_divide:
 		case IASTBinaryExpression.op_multiplyAssign:
 		case IASTBinaryExpression.op_divideAssign: {
-			addIntegerBoundsCheck(loc, result, typeOfResult, op, hook, left.getLrValue().getValue(),
+			addIntegerBoundsCheck(loc, builder, typeOfResult, op, hook, left.getLrValue().getValue(),
 					right.getLrValue().getValue());
 			break;
 		}
@@ -4449,42 +4441,36 @@ public class CHandler {
 				left.getLrValue().getValue(), typeOfResult, right.getLrValue().getValue(), typeOfResult);
 		final RValue rval = new RValue(expr, typeOfResult, false, false);
 
-		if (lType.isArithmeticType() && rType.isArithmeticType() &&
-				(lType.isFloatingType() || rType.isFloatingType())) {
-			
-			// TODO: duplicate in StandardFunctionHandler
-			Expression[] arguments = new Expression[1];
-			arguments[0] = rval.getValue();
-			final CPrimitive cType = new CPrimitive(CPrimitives.FLOAT);
-			final AuxVarInfo auxvarinfo = mAuxVarInfoBuilder.constructAuxVarInfo(loc, cType, SFO.AUXVAR.NONDET);
-			result.addDeclaration(auxvarinfo.getVarDec());
-			result.addAuxVar(auxvarinfo);
-			final CallStatement call = StatementFactory.constructCallStatement(
-					loc,
-					false, new VariableLHS[] {auxvarinfo.getLhs()},
-					"float_to_bitvec"  + Integer.toString(mTypeSizes.getFloatingPointSize(cType).getBitSize()),
-					arguments);
-			result.addStatement(call);
-			result.setLrValue(new RValue(auxvarinfo.getExp(), new CPrimitive(CPrimitives.FLOAT)));
+		if (lType.isArithmeticType() && rType.isArithmeticType()
+				&& (lType.isFloatingType() || rType.isFloatingType())) {
 
-			
-			// builder.setLrValue(rval);
+			final Expression[] arguments = new Expression[] { rval.getValue() };
+			final CPrimitive cType = (CPrimitive) rval.getCType();
+			assert cType.isSmtFloat() : "not an SMT float";
+			final AuxVarInfo auxvarinfo = mAuxVarInfoBuilder.constructAuxVarInfo(loc, cType, SFO.AUXVAR.NONDET);
+			builder.addDeclaration(auxvarinfo.getVarDec());
+			builder.addAuxVar(auxvarinfo);
+			final CallStatement call =
+					StatementFactory.constructCallStatement(loc, false, new VariableLHS[] { auxvarinfo.getLhs() },
+							"float_to_bitvec" + Integer.toString(mTypeSizes.getFloatingPointSize(cType).getBitSize()),
+							arguments);
+			builder.addStatement(call);
+			builder.setLrValue(new RValue(auxvarinfo.getExp(), cType.setIsSmtFloat(false)));
 		} else {
-			result.setLrValue(rval);
+			builder.setLrValue(rval);
 		}
-		
-		
+
 		switch (op) {
 		case IASTBinaryExpression.op_multiply:
 		case IASTBinaryExpression.op_divide:
 		case IASTBinaryExpression.op_modulo: {
 			assert lhs == null : "no assignment";
-			return result.build();
+			return builder.build();
 		}
 		case IASTBinaryExpression.op_multiplyAssign:
 		case IASTBinaryExpression.op_divideAssign:
 		case IASTBinaryExpression.op_moduloAssign: {
-			return makeAssignment(loc, lhs, Collections.emptyList(), result.build(), hook);
+			return makeAssignment(loc, lhs, Collections.emptyList(), builder.build(), hook);
 		}
 		default:
 			throw new AssertionError("no multiplicative " + op);
@@ -4639,7 +4625,7 @@ public class CHandler {
 					operand.getLrValue().getValue(), resultType);
 			// TODO: bitvec procedure here
 			final RValue rval = new RValue(bwexpr, resultType, false);
-			if (resultType.isFloatingType() ) {
+			if (resultType.isFloatingType()) {
 				return mExprResultTransformer.constructBitvecResult(rval, loc);
 			} else {
 				return result.setLrValue(rval).build();
