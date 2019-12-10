@@ -3988,8 +3988,9 @@ public class CHandler {
 			left = newOps.getFirst();
 			right = newOps.getSecond();
 			builder = new ExpressionResultBuilder().addAllExceptLrValue(left, right);
-			typeOfResult = left.getLrValue().getCType();
-			assert typeOfResult.equals(right.getLrValue().getCType());
+			typeOfResult = ((CPrimitive) left.getLrValue().getCType()).setIsSmtFloat(true);
+			// TODO: Do we need this?
+			// assert typeOfResult.equals(right.getLrValue().getCType());
 
 			addIntegerBoundsCheck(loc, builder, (CPrimitive) typeOfResult, op, hook, left.getLrValue().getValue(),
 					right.getLrValue().getValue());
