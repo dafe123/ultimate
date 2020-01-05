@@ -3988,7 +3988,8 @@ public class CHandler {
 			left = newOps.getFirst();
 			right = newOps.getSecond();
 			builder = new ExpressionResultBuilder().addAllExceptLrValue(left, right);
-			typeOfResult = ((CPrimitive) left.getLrValue().getCType()).setIsSmtFloat(true);
+			
+			typeOfResult = ((CPrimitive) left.getLrValue().getCType());
 			// TODO: Do we need this?
 			// assert typeOfResult.equals(right.getLrValue().getCType());
 
@@ -4058,7 +4059,6 @@ public class CHandler {
 			// TODO: near-duplicate in ExpressionResultTransformer
 			final Expression[] arguments = new Expression[] { rval.getValue() };
 			final CPrimitive cType = (CPrimitive) rval.getCType();
-			assert cType.isSmtFloat() : "not an SMT float";
 			final AuxVarInfo auxvarinfo = mAuxVarInfoBuilder.constructAuxVarInfo(loc, cType, SFO.AUXVAR.NONDET);
 			builder.addDeclaration(auxvarinfo.getVarDec());
 			builder.addAuxVar(auxvarinfo);
@@ -4067,7 +4067,7 @@ public class CHandler {
 							"float_to_bitvec" + Integer.toString(mTypeSizes.getFloatingPointSize(cType).getBitSize()),
 							arguments);
 			builder.addStatement(call);
-			builder.setLrValue(new RValue(auxvarinfo.getExp(), cType.setIsSmtFloat(false)));
+			builder.setLrValue(new RValue(auxvarinfo.getExp(), cType.getFloatCounterpart()));
 		} else {
 			builder.setLrValue(rval);
 		}
@@ -4456,7 +4456,7 @@ public class CHandler {
 							"float_to_bitvec" + Integer.toString(mTypeSizes.getFloatingPointSize(cType).getBitSize()),
 							arguments);
 			builder.addStatement(call);
-			builder.setLrValue(new RValue(auxvarinfo.getExp(), cType.setIsSmtFloat(false)));
+			builder.setLrValue(new RValue(auxvarinfo.getExp(), cType.getFloatCounterpart()));
 		} else {
 			builder.setLrValue(rval);
 		}

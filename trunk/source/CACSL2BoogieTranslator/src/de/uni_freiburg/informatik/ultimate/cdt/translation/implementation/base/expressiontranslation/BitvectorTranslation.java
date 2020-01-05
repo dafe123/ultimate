@@ -467,8 +467,15 @@ public class BitvectorTranslation extends ExpressionTranslation {
 	private void declareFloatingPointFunction(final ILocation loc, final String smtFunctionName,
 			final boolean boogieResultTypeBool, final boolean isRounded, final CPrimitive resultCType,
 			final int[] indices, final CPrimitive... paramCType) {
+		
+		final CPrimitive[] newParams = new CPrimitive[paramCType.length];
+		
+		for (int i = 0; i < paramCType.length; i++) {
+			newParams[i] = paramCType[i].getSMTVaraint();
+		}
+		
 		// first parameter defined Boogie function name
-		final String boogieFunctionName = SFO.getBoogieFunctionName(smtFunctionName, paramCType[0]);
+		final String boogieFunctionName = SFO.getBoogieFunctionName(smtFunctionName, newParams[0]);
 		if (mFunctionDeclarations.getDeclaredFunctions().containsKey(boogieFunctionName)) {
 			// function already declared
 			return;
@@ -476,18 +483,18 @@ public class BitvectorTranslation extends ExpressionTranslation {
 		final Attribute[] attributes =
 				generateAttributes(loc, mSettings.overapproximateFloatingPointOperations(), smtFunctionName, indices);
 		if (isRounded) {
-			final ASTType[] paramASTTypes = new ASTType[paramCType.length + 1];
+			final ASTType[] paramASTTypes = new ASTType[newParams.length + 1];
 			final ASTType resultASTType = mTypeHandler.cType2AstType(loc, resultCType);
 			int counter = 1;
 			paramASTTypes[0] = BitvectorTranslation.ROUNDING_MODE_BOOGIE_AST_TYPE;
-			for (final CPrimitive cType : paramCType) {
+			for (final CPrimitive cType : newParams) {
 				paramASTTypes[counter] = mTypeHandler.cType2AstType(loc, cType);
 				counter += 1;
 			}
 			mFunctionDeclarations.declareFunction(loc, boogieFunctionName, attributes, resultASTType, paramASTTypes);
 		} else {
 			mFunctionDeclarations.declareFunction(loc, boogieFunctionName, attributes, boogieResultTypeBool,
-					resultCType, paramCType);
+					resultCType, newParams);
 		}
 	}
 
@@ -1345,8 +1352,8 @@ public class BitvectorTranslation extends ExpressionTranslation {
 	@Override
 	public Expression transformBitvectorToFloat(final ILocation loc, final Expression bitvector,
 			final CPrimitives floatType) {
-		assert !floatType.isSmtFloat() && floatType.isFloatingType();
-		final CPrimitive conversionType = new CPrimitive(floatType.getFloatCounterpart()).setIsSmtFloat(true);
+		assert floatType.isFloatingType();
+		final CPrimitive conversionType = new CPrimitive(floatType.getSMTVariant());
 		final FloatingPointSize fps = mTypeSizes.getFloatingPointSize(floatType);
 		final Expression significantBits = extractBits(loc, bitvector, fps.getSignificant() - 1, 0);
 		final Expression exponentBits = extractBits(loc, bitvector, fps.getDataSize() - 1, fps.getSignificant() - 1);
