@@ -3989,7 +3989,7 @@ public class CHandler {
 			right = newOps.getSecond();
 			builder = new ExpressionResultBuilder().addAllExceptLrValue(left, right);
 			
-			typeOfResult = ((CPrimitive) left.getLrValue().getCType());
+			typeOfResult = ((CPrimitive) left.getLrValue().getCType()).getSMTVaraint();
 			// TODO: Do we need this?
 			// assert typeOfResult.equals(right.getLrValue().getCType());
 
