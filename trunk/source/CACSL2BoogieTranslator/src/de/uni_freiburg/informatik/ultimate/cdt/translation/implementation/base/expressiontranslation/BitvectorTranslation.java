@@ -472,7 +472,7 @@ public class BitvectorTranslation extends ExpressionTranslation {
 		final CPrimitive[] newParams = new CPrimitive[paramCType.length];
 		
 		for (int i = 0; i < paramCType.length; i++) {
-			newParams[i] = paramCType[i].getSMTVaraint();
+			newParams[i] = paramCType[i].getSMTVariant();
 		}
 		
 		// first parameter defined Boogie function name
@@ -791,8 +791,8 @@ public class BitvectorTranslation extends ExpressionTranslation {
 		if(!type1.isSmtFloat()) {
 			exp1Processed = transformBitvectorToFloat(loc, exp1, type1.getType());
 			exp2Processed = transformBitvectorToFloat(loc, exp2, type2.getType());
-			type1_smt = type1.getSMTVaraint();
-			type2_smt = type2.getSMTVaraint();
+			type1_smt = type1.getSMTVariant();
+			type2_smt = type2.getSMTVariant();
 		} else {
 			exp1Processed = exp1;
 			exp2Processed = exp2;

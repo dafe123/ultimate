@@ -452,7 +452,7 @@ public class CPrimitive extends CType {
 		mGeneralType = getGeneralType(mType);
 	}
 	
-	public CPrimitive getSMTVaraint() {
+	public CPrimitive getSMTVariant() {
 		return new CPrimitive(this.mType.getSMTVariant());
 	}
 	
