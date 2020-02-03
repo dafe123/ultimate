@@ -309,16 +309,10 @@
 	</properties>
 
 	<repositories>
-		<!-- 
-		We proxy repositories via monteverdi to reduce load and speed up the 
-		build in our LAN You can configure monteverdis proxy by visiting <url>https://monteverdi.informatik.uni-freiburg.de/nexus</url> 
-		The user/password is managed by DD 
-			
-		The original URLs are 
-		<url>http://download.eclipse.org/releases/mars/</url>
-		<url>http://download.eclipse.org/releases/neon/</url>
-		<url>http://download.eclipse.org/releases/2018-09/</url>
-		-->
+		<!-- We proxy repositories via monteverdi to reduce load and speed up the 
+			build in our LAN You can configure monteverdis proxy by visiting <url>https://monteverdi.informatik.uni-freiburg.de/nexus</url> 
+			The user/password is managed by DD The original URLs are <url>http://download.eclipse.org/releases/mars/</url> 
+			<url>http://download.eclipse.org/releases/neon/</url> <url>http://download.eclipse.org/releases/2018-09/</url> -->
 
 		<repository>
 			<id>eclipse-mars</id>
@@ -340,6 +334,30 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
+
+
+		<repository>
+			<id>Jetty</id>
+			<name>Jetty</name>
+			<url>http://download.eclipse.org/jetty/updates/jetty-bundles-9.x</url>
+			<layout>p2</layout>
+
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+
+		<repository>
+			<id>Orbit R20191126223242</id>
+			<name>Orbit R20191126223242</name>
+			<url>https://download.eclipse.org/tools/orbit/downloads/drops/R20191126223242/repository</url>
+			<layout>p2</layout>
+
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+
 	</repositories>
 
 	<build>
@@ -479,97 +497,95 @@
 	</build>
 
 	<modules>
-        <module>../AbstractInterpretationV2</module>
-        <module>../ACSLParser</module>
-        <module>../ASTBuilder</module>
-        <module>../AutomataScriptInterpreter</module>
-        <module>../AutomataScriptParser</module>
-        <module>../AutomatonDeltaDebugger</module>
-        <module>../BlockEncoding</module>
-        <module>../BlockEncodingV2</module>
-        <module>../BoogieModSetAnnotator</module>
-        <module>../BoogiePLParser</module>
-        <module>../BoogiePreprocessor</module>
-        <module>../BoogiePrinter</module>
-        <module>../BoogieProcedureInliner</module>
-        <module>../BuchiAutomizer</module>
-        <module>../BuchiProgramProduct</module>
-        <module>../CACSL2BoogieTranslator</module>
-        <module>../CDTParser</module>
-        <module>../CDTPlugin</module>
-        <module>../ChcSmtPrinter</module>
-        <module>../ChcToBoogie</module>
-        <module>../CodeCheck</module>
-        <module>../CoreRCP</module>
-        <module>../Crocotta</module>
-        <module>../GUIGeneratedPreferencePages</module>
-        <module>../GUILoggingWindow</module>
-        <module>../GuiRCP</module>
-        <module>../IcfgToChc</module>
-        <module>../IcfgTransformation</module>
-        <module>../InvariantSynthesis</module>
-        <module>../IRSDependencies</module>
-        <module>../JavaCup</module>
-        <module>../JungVisualization</module>
-        <module>../LassoRanker</module>
-        <module>../Library-ApacheCommonsCLI</module>
-        <module>../Library-ApacheCommonsLang</module>
-        <module>../Library-Automata</module>
-        <module>../Library-Batik</module>
-        <module>../Library-BoogieAST</module>
-        <module>../Library-CHC</module>
-        <module>../Library-CZT</module>
-        <module>../Library-Disruptor</module>
-        <module>../Library-IcfgTransformer</module>
-        
-        
-        
-        <module>../Library-JavaBDD</module>
-        <module>../Library-jdom</module>
-        <module>../Library-Jung</module>
-        <module>../Library-LassoRanker</module>
-        <module>../Library-Log4j2</module>
-        <module>../Library-log4j</module>
-        <module>../Library-MCR</module>
-        <module>../Library-ModelCheckerUtils</module>
+		<module>../AbstractInterpretationV2</module>
+		<module>../ACSLParser</module>
+		<module>../ASTBuilder</module>
+		<module>../AutomataScriptInterpreter</module>
+		<module>../AutomataScriptParser</module>
+		<module>../AutomatonDeltaDebugger</module>
+		<module>../BlockEncoding</module>
+		<module>../BlockEncodingV2</module>
+		<module>../BoogieModSetAnnotator</module>
+		<module>../BoogiePLParser</module>
+		<module>../BoogiePreprocessor</module>
+		<module>../BoogiePrinter</module>
+		<module>../BoogieProcedureInliner</module>
+		<module>../BuchiAutomizer</module>
+		<module>../BuchiProgramProduct</module>
+		<module>../CACSL2BoogieTranslator</module>
+		<module>../CDTParser</module>
+		<module>../CDTPlugin</module>
+		<module>../ChcSmtPrinter</module>
+		<module>../ChcToBoogie</module>
+		<module>../CodeCheck</module>
+		<module>../CoreRCP</module>
+		<module>../Crocotta</module>
+		<module>../GUIGeneratedPreferencePages</module>
+		<module>../GUILoggingWindow</module>
+		<module>../GuiRCP</module>
+		<module>../IcfgToChc</module>
+		<module>../IcfgTransformation</module>
+		<module>../InvariantSynthesis</module>
+		<module>../IRSDependencies</module>
+		<module>../JavaCup</module>
+		<module>../JungVisualization</module>
+		<module>../LassoRanker</module>
+		<module>../Library-ApacheCommonsCLI</module>
+		<module>../Library-ApacheCommonsLang</module>
+		<module>../Library-Automata</module>
+		<module>../Library-Batik</module>
+		<module>../Library-BoogieAST</module>
+		<module>../Library-CHC</module>
+		<module>../Library-CZT</module>
+		<module>../Library-Disruptor</module>
+		<module>../Library-IcfgTransformer</module>
+		<module>../WebBackend</module>
+		<module>../Library-JavaBDD</module>
+		<module>../Library-jdom</module>
+		<module>../Library-Jung</module>
+		<module>../Library-LassoRanker</module>
+		<module>../Library-Log4j2</module>
+		<module>../Library-log4j</module>
+		<module>../Library-MCR</module>
+		<module>../Library-ModelCheckerUtils</module>
         <module>../Library-MSOD</module>
-        <module>../Library-ojAlgo</module>
-        <module>../Library-PathExpressions</module>
-        <module>../Library-PDR</module>
-        <module>../Library-PEA</module>
-        <module>../Library-SMTLIB</module>
-        <module>../Library-srParse</module>
-        <module>../Library-Sifa</module>
+		<module>../Library-ojAlgo</module>
+		<module>../Library-PathExpressions</module>
+		<module>../Library-PDR</module>
+		<module>../Library-PEA</module>
+		<module>../Library-SMTLIB</module>
+		<module>../Library-srParse</module>
+		<module>../Library-Sifa</module>
         <module>../Library-TraceCheckerUtils</module>
-        <module>../Library-UltimateCore</module>
-        <module>../Library-UltimateModel</module>
-        <module>../Library-UltimateUtil</module>
-        <module>../Library-xerces</module>
-        <module>../LTL2aut</module>
+		<module>../Library-UltimateCore</module>
+		<module>../Library-UltimateModel</module>
+		<module>../Library-UltimateUtil</module>
+		<module>../Library-xerces</module>
+		<module>../LTL2aut</module>
         <module>../PeaExampleGenerator</module>
-        <module>../PEAtoBoogie</module>
-        <module>../RCFGBuilder</module>
-        <module>../ReachingDefinitions</module>
-        <module>../Referee</module>
-        <module>../ReqParser</module>
-        <module>../ReqPrinter</module>
-        <module>../ReqToTest</module>
-        <module>../SMTInterpol</module>
-        <module>../SmtParser</module>
-        <module>../SMTSolverBridge</module>
-        <module>../SpaceExParser</module>
-        <module>../SyntaxChecker</module>
+		<module>../PEAtoBoogie</module>
+		<module>../RCFGBuilder</module>
+		<module>../ReachingDefinitions</module>
+		<module>../Referee</module>
+		<module>../ReqParser</module>
+		<module>../ReqPrinter</module>
+		<module>../ReqToTest</module>
+		<module>../SMTInterpol</module>
+		<module>../SmtParser</module>
+		<module>../SMTSolverBridge</module>
+		<module>../SpaceExParser</module>
+		<module>../SyntaxChecker</module>
 		<module>../Sifa</module>
-        <module>../TraceAbstractionConcurrent</module>
-        <module>../TraceAbstraction</module>
-        <module>../TraceAbstractionWithAFAs</module>
-        <module>../TreeAutomizer</module>
-        <module>../UltimateCLI</module>
-        <module>../UltimateDeltaDebugger</module>
-        
-        <module>../WitnessParser</module>
-        <module>../WitnessPrinter</module>
-        <module>../UltimateEliminatorController</module>
+		<module>../TraceAbstractionConcurrent</module>
+		<module>../TraceAbstraction</module>
+		<module>../TraceAbstractionWithAFAs</module>
+		<module>../TreeAutomizer</module>
+		<module>../UltimateCLI</module>
+		<module>../UltimateDeltaDebugger</module>
+
+		<module>../WitnessParser</module>
+		<module>../WitnessPrinter</module>
+		<module>../UltimateEliminatorController</module>
         
 	</modules>
 
@@ -833,7 +849,7 @@
 				<module>../SMTSolverBridgeTest</module>
 				<module>../SpaceExParserTest</module>
 				<module>../PEAtoBoogieTest</module>
-				
+
 
 				<!-- UltimateRegressionTest contains system tests that are relatively 
 					fast -->
