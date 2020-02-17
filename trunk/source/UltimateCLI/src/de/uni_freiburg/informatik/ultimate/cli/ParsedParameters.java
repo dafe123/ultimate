@@ -59,7 +59,7 @@ import de.uni_freiburg.informatik.ultimate.util.datastructures.relation.Pair;
 /**
  * @author Daniel Dietsch (dietsch@informatik.uni-freiburg.de)
  */
-public class ParsedParameter {
+public class ParsedParameters {
 
 	private final CommandLine mCli;
 	private final ICore<RunDefinition> mCore;
@@ -67,7 +67,7 @@ public class ParsedParameter {
 	private final OptionBuilder mOptionFactory;
 	private String mCsvPrefix;
 
-	ParsedParameter(final ICore<RunDefinition> core, final CommandLine cli, final OptionBuilder optionFactory) {
+	ParsedParameters(final ICore<RunDefinition> core, final CommandLine cli, final OptionBuilder optionFactory) {
 		mCore = core;
 		mCli = cli;
 		mOptionFactory = optionFactory;
