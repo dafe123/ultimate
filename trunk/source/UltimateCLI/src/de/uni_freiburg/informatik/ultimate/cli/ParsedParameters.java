@@ -62,25 +62,22 @@ import de.uni_freiburg.informatik.ultimate.util.datastructures.relation.Pair;
 public class ParsedParameters {
 
 	private final CommandLine mCli;
-	private final ICore<RunDefinition> mCore;
-	private final ILogger mLogger;
 	private final OptionBuilder mOptionFactory;
 	private String mCsvPrefix;
 
-	ParsedParameters(final ICore<RunDefinition> core, final CommandLine cli, final OptionBuilder optionFactory) {
-		mCore = core;
+	ParsedParameters(final CommandLine cli, final OptionBuilder optionFactory) {
 		mCli = cli;
 		mOptionFactory = optionFactory;
-		mLogger = core.getCoreLoggingService().getControllerLogger();
 	}
 
-	public void applyCliSettings(final IUltimateServiceProvider services) throws ParseException {
+	public void applyCliSettings(final ILogger logger, final IUltimateServiceProvider services) throws ParseException {
 		for (final Option op : mCli.getOptions()) {
-			applyCliSetting(op, services);
+			applyCliSetting(logger, op, services);
 		}
 	}
 
-	private void applyCliSetting(final Option op, final IUltimateServiceProvider services) throws ParseException {
+	private void applyCliSetting(final ILogger logger, final Option op, final IUltimateServiceProvider services)
+			throws ParseException {
 		final String optName = op.getLongOpt();
 		final Pair<String, String> prefName = mOptionFactory.getUltimatePreference(optName);
 		if (prefName == null) {
@@ -88,7 +85,7 @@ public class ParsedParameters {
 		}
 		final IPreferenceProvider preferences = services.getPreferenceProvider(prefName.getFirst());
 		final Object value = getParsedOption(optName);
-		mLogger.info(
+		logger.info(
 				"Applying setting for plugin " + prefName.getFirst() + ": " + prefName.getSecond() + " -> " + value);
 		preferences.put(prefName.getSecond(), String.valueOf(value));
 	}
@@ -150,10 +147,11 @@ public class ParsedParameters {
 		return file;
 	}
 
-	public IToolchainData<RunDefinition> createToolchainData() throws InvalidFileArgumentException, ParseException {
+	public IToolchainData<RunDefinition> createToolchainData(final ICore<RunDefinition> core)
+			throws InvalidFileArgumentException, ParseException {
 		final File toolchainFile = getToolchainFile();
 		try {
-			return mCore.createToolchainData(toolchainFile.getAbsolutePath());
+			return core.createToolchainData(toolchainFile.getAbsolutePath());
 		} catch (final FileNotFoundException e1) {
 			throw new InvalidFileArgumentException(
 					"Toolchain file not found at specified path: " + toolchainFile.getAbsolutePath());
